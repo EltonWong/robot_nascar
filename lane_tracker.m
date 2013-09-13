@@ -1,6 +1,7 @@
 %TODO:  Video Logger
 %       Robust
 %
+
 function s = lane_tracker()
 
 global kbhit;
@@ -25,11 +26,23 @@ while ~kbhit
 
         I(1:end,1:end) = 0;
         if length(ind) > 1;
-            I(CC.PixelIdxList{ind(1)}) = 255;
-            I(CC.PixelIdxList{ind(2)}) = 255;
+            r = pic(:,:,1);
+            g = pic(:,:,2);
+            b = pic(:,:,3);
+
+            r(CC.PixelIdxList{ind(1)}) = 255; 
+            r(CC.PixelIdxList{ind(2)}) = 255; 
+            g(CC.PixelIdxList{ind(1)}) = 0;
+            g(CC.PixelIdxList{ind(2)}) = 0;
+            b(CC.PixelIdxList{ind(1)}) = 0;
+            b(CC.PixelIdxList{ind(2)}) = 0;
+
+            pic(:,:,1) = r;
+            pic(:,:,2) = g;
+            pic(:,:,3) = b;
         end
 
-        set(h,'CDATA', I);
+        set(h,'CDATA', pic);
         drawnow;
     end
 
