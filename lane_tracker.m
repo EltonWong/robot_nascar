@@ -17,6 +17,10 @@ while ~kbhit
         I=mxNiPhoto(KinectHandles); I=permute(I,[3 2 1]);
         pic = I;
         I(I < 250) = 0;
+
+        % DO NOT REMOVE TOP HALF OF SCREEN
+        % Will create problems when extrapolating curvature
+        % Segment Better
         I(1:160,:,:) = 0;
         I = rgb2gray(I);
         I(I~=0) = 255;
