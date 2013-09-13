@@ -2,7 +2,7 @@
 %       Robust
 %
 
-function s = lane_tracker()
+function lane_tracker()
 
 global kbhit;
 kbhit = false;
@@ -46,5 +46,6 @@ while ~kbhit
         drawnow;
     end
 
+    close all;
     mxNiDeleteContext(KinectHandles);
 
