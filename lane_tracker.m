@@ -21,7 +21,7 @@ while ~kbhit
         % DO NOT REMOVE TOP HALF OF SCREEN
         % Will create problems when extrapolating curvature
         % Segment Better
-        I(1:160,:,:) = 0;
+        I(1:130,:,:) = 0;
         I = rgb2gray(I);
         I(I~=0) = 255;
         CC = bwconncomp(I);
