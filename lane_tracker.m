@@ -7,28 +7,30 @@ function lane_tracker()
 global kbhit;
 kbhit = false;
 
+
+
 KinectHandles=mxNiCreateContext();
 figure('KeyPressFcn', @my_kbhit);
 I=mxNiPhoto(KinectHandles); I=permute(I,[3 2 1]);
-h = imagesc(I);
-colormap gray;
+subplot(1, 2, 1), h1 = imagesc(I);axis image;
+subplot(1, 2, 2), h2 = imagesc(I);
+axis image;
 
 while ~kbhit
         I=mxNiPhoto(KinectHandles); I=permute(I,[3 2 1]);
         pic = I;
-        I(I < 250) = 0;
-
-        % DO NOT REMOVE TOP HALF OF SCREEN
-        % Will create problems when extrapolating curvature
-        % Segment Better
+        % Consider thresholding on bw image if encounter speed issue
+        % Consider adaptive thresholding
+        I(I < 240) = 0;
         I(1:130,:,:) = 0;
         I = rgb2gray(I);
-        I(I~=0) = 255;
+        I = im2bw(I, 0.9);
+        I = bwmorph(I, 'OPEN', 2);
+        I = bwmorph(I, 'CLOSE');
         CC = bwconncomp(I);
         s = regionprops(CC, 'Area', 'PixelIdxList');
         [val, ind] = sort([s.Area], 'descend');
 
-        I(1:end,1:end) = 0;
         if length(ind) > 1;
             r = pic(:,:,1);
             g = pic(:,:,2);
@@ -46,7 +48,9 @@ while ~kbhit
             pic(:,:,3) = b;
         end
 
-        set(h,'CDATA', pic);
+        set(h1,'CDATA', pic);
+        set(h2, 'CDATA', I);
+        colormap gray;
         drawnow;
     end
 
