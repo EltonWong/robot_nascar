@@ -7,30 +7,29 @@ function lane_tracker()
 global kbhit;
 kbhit = false;
 
-
-
 KinectHandles=mxNiCreateContext();
 figure('KeyPressFcn', @my_kbhit);
 I=mxNiPhoto(KinectHandles); I=permute(I,[3 2 1]);
-subplot(1, 2, 1), h1 = imagesc(I);axis image;
-subplot(1, 2, 2), h2 = imagesc(I);
-axis image;
+h = imagesc(I);
+colormap gray;
 
 while ~kbhit
         I=mxNiPhoto(KinectHandles); I=permute(I,[3 2 1]);
         pic = I;
-        % Consider thresholding on bw image if encounter speed issue
-        % Consider adaptive thresholding
-        I(I < 240) = 0;
-        I(1:130,:,:) = 0;
+        I(I < 250) = 0;
+
+        % DO NOT REMOVE TOP HALF OF SCREEN
+        % Will create problems when extrapolating curvature
+        % Segment Better
+        I(1:160,:,:) = 0;
         I = rgb2gray(I);
-        I = im2bw(I, 0.9);
-        I = bwmorph(I, 'OPEN', 2);
-        I = bwmorph(I, 'CLOSE');
+        I(I~=0) = 255;
+        % Could use im2bw(I, level) with a level of around 0.95
         CC = bwconncomp(I);
         s = regionprops(CC, 'Area', 'PixelIdxList');
         [val, ind] = sort([s.Area], 'descend');
 
+        I(1:end,1:end) = 0;
         if length(ind) > 1;
             r = pic(:,:,1);
             g = pic(:,:,2);
@@ -48,12 +47,18 @@ while ~kbhit
             pic(:,:,3) = b;
         end
 
-        set(h1,'CDATA', pic);
-        set(h2, 'CDATA', I);
-        colormap gray;
+        set(h,'CDATA', pic);
         drawnow;
     end
 
     close all;
     mxNiDeleteContext(KinectHandles);
+
+end
+
+
+function my_kbhit()
+	global kbhit
+	kbhit = true
+end
 
