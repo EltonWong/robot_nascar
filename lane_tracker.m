@@ -16,7 +16,7 @@ colormap gray;
 while ~kbhit
         I=mxNiPhoto(KinectHandles); I=permute(I,[3 2 1]);
         pic = I;
-        I(I < 250) = 0;
+	I(I < 250) = 0;
 
         % DO NOT REMOVE TOP HALF OF SCREEN
         % Will create problems when extrapolating curvature
@@ -58,7 +58,7 @@ end
 
 
 function my_kbhit()
-	global kbhit
-	kbhit = true
+	global kbhit;
+	kbhit = true;
 end
 
