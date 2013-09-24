@@ -29,7 +29,10 @@ while ~kbhit
         s = regionprops(CC, 'Area', 'PixelIdxList');
         [val, ind] = sort([s.Area], 'descend');
 
-        I(1:end,1:end) = 0;
+       	
+	%Create array of connected components and pass as arg to comp_to_line
+	%use refline(m, b) to overlay lines on plot
+	I(1:end,1:end) = 0;
         if length(ind) > 1;
             r = pic(:,:,1);
             g = pic(:,:,2);
